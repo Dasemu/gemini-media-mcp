@@ -1,0 +1,148 @@
+server {
+    listen 80 default_server;
+    server_name _;
+
+    location /zenvairogit/ {
+        auth_basic "ZenvairoGit MCP";
+        auth_basic_user_file /etc/nginx/htpasswd/zenvairogit;
+
+        proxy_pass http://127.0.0.1:8081/;
+        proxy_http_version 1.1;
+        proxy_set_header Host 127.0.0.1;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Origin "";
+
+        proxy_buffering off;
+        proxy_cache off;
+        proxy_read_timeout 300s;
+        proxy_send_timeout 300s;
+
+        proxy_set_header Mcp-Protocol-Version $http_mcp_protocol_version;
+        proxy_set_header Mcp-Session-Id $http_mcp_session_id;
+    }
+
+    location /zenvairocloud/ {
+        auth_basic "ZenvairoCloud MCP";
+        auth_basic_user_file /etc/nginx/htpasswd/zenvairocloud;
+
+        proxy_pass http://127.0.0.1:8082/;
+        proxy_http_version 1.1;
+        proxy_set_header Host 127.0.0.1:8082;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Origin "";
+
+        proxy_buffering off;
+        proxy_cache off;
+        proxy_read_timeout 300s;
+        proxy_send_timeout 300s;
+
+        proxy_set_header Mcp-Session-Id $http_mcp_session_id;
+    }
+
+    location /zenvairoanalytics/ {
+        auth_basic "ZenvairoAnalytics MCP";
+        auth_basic_user_file /etc/nginx/htpasswd/zenvairoanalytics;
+
+        proxy_pass http://127.0.0.1:8083/;
+        proxy_http_version 1.1;
+        proxy_set_header Host 127.0.0.1:8083;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Origin "";
+
+        proxy_buffering off;
+        proxy_cache off;
+        proxy_read_timeout 300s;
+        proxy_send_timeout 300s;
+
+        proxy_set_header Mcp-Session-Id $http_mcp_session_id;
+    }
+
+    location /zenvairomail/ {
+        auth_basic "ZenvairoMail MCP";
+        auth_basic_user_file /etc/nginx/htpasswd/zenvairomail;
+
+        proxy_pass http://127.0.0.1:8084/;
+        proxy_http_version 1.1;
+        proxy_set_header Host 127.0.0.1:8084;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Origin "";
+
+        proxy_buffering off;
+        proxy_cache off;
+        proxy_read_timeout 300s;
+        proxy_send_timeout 300s;
+
+        proxy_set_header Mcp-Session-Id $http_mcp_session_id;
+    }
+
+    location /zenvairocrm/ {
+        auth_basic "ZenvairoCRM MCP";
+        auth_basic_user_file /etc/nginx/htpasswd/zenvairocrm;
+
+        proxy_pass http://127.0.0.1:8085/;
+        proxy_http_version 1.1;
+        proxy_set_header Host 127.0.0.1:8085;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Origin "";
+
+        proxy_buffering off;
+        proxy_cache off;
+        proxy_read_timeout 300s;
+        proxy_send_timeout 300s;
+
+        proxy_set_header Mcp-Session-Id $http_mcp_session_id;
+    }
+
+    # Archivos subidos con upload_media: SIN Basic Auth, para que Meta pueda
+    # descargarlos al publicar (nombre de archivo aleatorio tipo UUID).
+    location /zenvairosocial/media/ {
+        proxy_pass http://127.0.0.1:8086/media/;
+        proxy_http_version 1.1;
+        proxy_set_header Host 127.0.0.1:8086;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_buffering off;
+        proxy_cache off;
+        proxy_read_timeout 300s;
+        proxy_send_timeout 300s;
+    }
+
+    location /zenvairosocial/ {
+        auth_basic "ZenvairoSocial MCP";
+        auth_basic_user_file /etc/nginx/htpasswd/zenvairosocial;
+
+        proxy_pass http://127.0.0.1:8086/;
+        proxy_http_version 1.1;
+        proxy_set_header Host 127.0.0.1:8086;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Origin "";
+
+        proxy_buffering off;
+        proxy_cache off;
+        proxy_read_timeout 300s;
+        proxy_send_timeout 300s;
+
+        proxy_set_header Mcp-Protocol-Version $http_mcp_protocol_version;
+        proxy_set_header Mcp-Session-Id $http_mcp_session_id;
+    }
+
+    include /etc/nginx/http.d/zenvairogoogle.inc;
+
+    location = / {
+        return 404;
+    }
+}

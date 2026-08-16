@@ -1,0 +1,26 @@
+#!/sbin/openrc-run
+
+name="gemini-veo-mcp"
+description="Gemini and Veo MCP server (Streamable HTTP, 127.0.0.1:8087)"
+command="/usr/bin/node"
+command_args="/opt/gemini-veo-mcp/dist/index.js"
+directory="/opt/gemini-veo-mcp"
+command_user="mcp:mcp"
+command_background="yes"
+pidfile="/run/${RC_SVCNAME}.pid"
+output_log="/var/log/${RC_SVCNAME}.log"
+error_log="/var/log/${RC_SVCNAME}.log"
+env_file="/opt/gemini-veo-mcp/gemini-veo-mcp.env"
+
+start_pre() {
+    checkpath -d -m 0750 -o mcp:mcp /opt/gemini-veo-mcp/media
+    checkpath -f -m 0640 -o mcp:mcp "${output_log}"
+    set -a
+    [ -f "${env_file}" ] && . "${env_file}"
+    set +a
+}
+
+depend() {
+    need net
+    after nginx
+}

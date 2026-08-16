@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.env
+deploy/.basic-password
+deploy/.server-token
+deploy/gemini-veo-mcp.env
+deploy/zenvairogoogle.conf
+deploy/zenvairogoogle.htpasswd
+media/*
+!media/.gitkeep
+gemini-veo-mcp.env
