@@ -1,0 +1,59 @@
+name: Version
+
+on:
+  push:
+    branches: [development, main]
+
+permissions:
+  contents: write
+
+jobs:
+  bump:
+    if: github.actor != 'github-actions[bot]' && !contains(github.event.head_commit.message, '[skip ci]')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Determine bump type
+        id: bump
+        run: |
+          if [ "${{ github.ref_name }}" = "development" ]; then
+            echo "type=patch" >> "$GITHUB_OUTPUT"
+          else
+            # main: a merge commit (2 parents) means this came from an approved
+            # development -> main PR; anything else is a direct hotfix push.
+            parents=$(git rev-list --parents -n 1 HEAD | wc -w)
+            if [ "$parents" -gt 2 ]; then
+              echo "type=minor" >> "$GITHUB_OUTPUT"
+            else
+              echo "type=patch" >> "$GITHUB_OUTPUT"
+            fi
+          fi
+
+      - name: Bump version
+        id: version
+        run: |
+          new_version=$(npm version "${{ steps.bump.outputs.type }}" --no-git-tag-version)
+          echo "new_version=${new_version#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Commit version bump
+        run: |
+          git add package.json package-lock.json
+          git commit -m "chore(release): v${{ steps.version.outputs.new_version }} [skip ci]"
+          git push origin "${{ github.ref_name }}"
+
+      - name: Merge main back into development
+        if: github.ref_name == 'main'
+        run: |
+          git fetch origin development
+          git checkout development
+          git merge --no-edit origin/main
+          git push origin development
