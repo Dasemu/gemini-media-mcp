@@ -1,35 +1,35 @@
-# Despliegue LXC 210 (Alpine/OpenRC)
+# Deployment on LXC 210 (Alpine/OpenRC)
 
-La instalación operativa está en `/opt/gemini-veo-mcp`, ejecutada como `mcp:mcp`, ligada a `127.0.0.1:8087` y supervisada por OpenRC (`gemini-veo-mcp`). nginx protege `/zenvairogoogle/` con Basic y deja pública únicamente `/zenvairogoogle/public-media/`; la aplicación exige en esa ruta una firma HMAC válida y caducable.
+The operational install lives in `/opt/gemini-veo-mcp`, runs as `mcp:mcp`, binds to `127.0.0.1:8087` and is supervised by OpenRC (`gemini-veo-mcp`). nginx protects `/zenvairogoogle/` with Basic auth and leaves only `/zenvairogoogle/public-media/` public; the application requires a valid, expiring HMAC signature on that route.
 
-Para añadir la API key:
+To add the API key:
 
 ```sh
 pct exec 210 -- vi /opt/gemini-veo-mcp/gemini-veo-mcp.env
 pct exec 210 -- rc-service gemini-veo-mcp restart
 ```
 
-Comprobaciones:
+Checks:
 
 ```sh
 pct exec 210 -- rc-service gemini-veo-mcp status
 pct exec 210 -- tail -f /var/log/gemini-veo-mcp.log
 ```
 
-Los logs son JSON Lines e incluyen modelo, UUID, duración, bytes de salida, coste estimado y reintentos; no incluyen prompts ni credenciales.
+Logs are JSON Lines and include model, UUID, duration, output bytes, estimated cost and retries; they do not include prompts or credentials.
 
-Referencia de los ficheros de despliegue en `deploy/`:
+Reference for the deployment files in `deploy/`:
 
-- `gemini-veo-mcp.openrc`: servicio OpenRC.
-- `gemini-veo-mcp.env.template`: plantilla de variables de entorno (sin secretos reales).
-- `default.conf.lxc210`, `nginx-location.conf`: configuración de nginx.
+- `gemini-veo-mcp.openrc`: OpenRC service.
+- `gemini-veo-mcp.env.template`: environment variable template (no real secrets).
+- `default.conf.lxc210`, `nginx-location.conf`: nginx configuration.
 
-## Test real pagado
+## Paid integration test
 
-El test usa el MCP completo: `generate_image` → `query_tasks` hasta `COMPLETED`, decodifica base64 y valida la firma PNG/JPEG. Tras configurar la key y reiniciar:
+The test uses the full MCP: `generate_image` -> `query_tasks` until `COMPLETED`, decodes base64 and validates the PNG/JPEG signature. After configuring the key and restarting:
 
 ```sh
 pct exec 210 -- /bin/sh -lc 'cd /opt/gemini-veo-mcp && set -a && . ./gemini-veo-mcp.env && set +a && npm run test:integration'
 ```
 
-Sin credenciales el test se marca como `SKIP` y no incurre en coste.
+Without credentials the test is marked `SKIP` and incurs no cost.

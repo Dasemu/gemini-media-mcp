@@ -1,21 +1,21 @@
-# Zenvairo Google Media MCP
+# Zenvairo Media Generator MCP
 
-Servidor MCP remoto y *stateless* (Streamable HTTP) para generación de imágenes con Gemini y vídeo con Veo 3.1. Sigue el contrato `submit + poll`: `generate_image`/`generate_video` devuelven inmediatamente un UUID y `query_tasks` entrega el resultado final.
+Remote, stateless (Streamable HTTP) MCP server for image generation with Gemini and video generation with Veo 3.1. It follows the `submit + poll` contract: `generate_image`/`generate_video` return a UUID immediately and `query_tasks` delivers the final result.
 
 ## Quick start
 
 ```sh
 npm ci
-cp .env.example .env   # rellena GEMINI_API_KEY y los demás valores
-npm run dev            # o: npm run build && npm start
+cp .env.example .env   # fill in GEMINI_API_KEY and the other values
+npm run dev            # or: npm run build && npm start
 ```
 
-Tools disponibles: `who_am_i`, `generate_image`, `generate_video`, `compose_video_overlay`, `query_tasks`, `get_usage`.
+Available tools: `who_am_i`, `generate_image`, `generate_video`, `compose_video_overlay`, `query_tasks`, `get_usage`.
 
-## Documentación
+## Documentation
 
-- [`docs/api.md`](docs/api.md) — credenciales de Google, tools, referencias de imagen y composición de overlays.
-- [`docs/media-delivery.md`](docs/media-delivery.md) — entrega de medios, límites y retención.
-- [`docs/deployment.md`](docs/deployment.md) — despliegue en LXC 210 (Alpine/OpenRC) y test de integración pagado.
-- [`docs/integration.md`](docs/integration.md) — alta como conector en Claude.ai / Cowork.
-- [`CLAUDE.md`](CLAUDE.md) — comandos, arquitectura y convenciones para desarrollo.
+- [`docs/api.md`](docs/api.md) - Google credentials, tools, image references and overlay composition.
+- [`docs/media-delivery.md`](docs/media-delivery.md) - media delivery, limits and retention.
+- [`docs/deployment.md`](docs/deployment.md) - deployment on LXC 210 (Alpine/OpenRC) and the paid integration test.
+- [`docs/integration.md`](docs/integration.md) - registering the server as a Claude.ai / Cowork connector.
+- [`CLAUDE.md`](CLAUDE.md) - commands, architecture and conventions for development.

@@ -1,39 +1,39 @@
-# API y credenciales de Google
+# API and Google credentials
 
-A fecha de referencia **2026-08-14**, Veo 3.1 Standard, Fast y Lite están disponibles en la capa de pago de la **Gemini Developer API**. Por tanto, tanto imagen como vídeo usan únicamente `GEMINI_API_KEY`; no se requieren `GOOGLE_APPLICATION_CREDENTIALS`, `GCP_PROJECT_ID` ni `GCP_LOCATION` para los modelos expuestos aquí.
+As of the reference date **2026-08-14**, Veo 3.1 Standard, Fast and Lite are available on the paid tier of the **Gemini Developer API**. Both image and video generation therefore use only `GEMINI_API_KEY`; `GOOGLE_APPLICATION_CREDENTIALS`, `GCP_PROJECT_ID` and `GCP_LOCATION` are not required for the models exposed here.
 
-Fuentes oficiales:
+Official sources:
 
-- Imagen: https://ai.google.dev/gemini-api/docs/image-generation
+- Image: https://ai.google.dev/gemini-api/docs/image-generation
 - Veo: https://ai.google.dev/gemini-api/docs/veo
-- Precios: https://ai.google.dev/gemini-api/docs/pricing
+- Pricing: https://ai.google.dev/gemini-api/docs/pricing
 
-La clave nunca forma parte de los schemas o respuestas MCP. El proceso arranca sin clave para permitir `who_am_i` y health checks, pero los jobs fallarán con `SERVER_NOT_CONFIGURED` hasta configurarla.
+The key is never part of MCP schemas or responses. The process starts without a key so that `who_am_i` and health checks work, but jobs fail with `SERVER_NOT_CONFIGURED` until it is configured.
 
 ## Tools
 
-- `who_am_i`: catálogo por tipo, alias, argumentos, restricciones y precios oficiales de referencia.
-- `generate_image`: envío no bloqueante de una o varias imágenes.
-- `generate_video`: envío no bloqueante de un vídeo Veo.
-- `compose_video_overlay`: composición local no bloqueante de tarjetas Pillow sobre un vídeo retenido, con un nuevo `generationId`.
-- `query_tasks`: polling compartido y entrega final.
-- `get_usage`: estimaciones acumuladas desde el último arranque. Google no expone el saldo restante de facturación mediante esta API.
+- `who_am_i`: catalog by type, aliases, arguments, constraints and official reference prices.
+- `generate_image`: non-blocking submission of one or more images.
+- `generate_video`: non-blocking submission of one Veo video.
+- `compose_video_overlay`: non-blocking local composition of Pillow cards over a retained video, producing a new `generationId`.
+- `query_tasks`: shared polling and final delivery.
+- `get_usage`: cumulative estimates since the last start. Google does not expose the remaining billing balance through this API.
 
-`arguments` siempre es una lista `{ "name": ..., "value": ... }`, compatible con el patrón del conector Kling. Veo 3.1 siempre genera audio; `with_audio=false` se rechaza explícitamente.
+`arguments` is always a list of `{ "name": ..., "value": ... }`, compatible with the Kling connector pattern. Veo 3.1 always generates audio; `with_audio=false` is rejected explicitly.
 
-## Encadenar imágenes de referencia
+## Chaining reference images
 
-`generate_image` acepta `reference_images` con dos variantes mezclables. La recomendada referencia una generación terminada por UUID, de modo que los bytes viajan directamente del disco del servidor a Gemini y nunca pasan por el contexto del LLM:
+`generate_image` accepts `reference_images` in two mixable variants. The recommended one references a finished generation by UUID, so the bytes travel directly from the server disk to Gemini and never pass through the LLM context:
 
 ```json
 {
   "model": "gemini-3.1-flash-image",
   "arguments": [
-    { "name": "prompt", "value": "Crea la slide 2 manteniendo exactamente el estilo visual de la referencia" },
+    { "name": "prompt", "value": "Create slide 2, keeping exactly the visual style of the reference" },
     {
       "name": "reference_images",
       "value": [
-        { "generation_id": "<generationId de la slide anterior>", "index": 0 }
+        { "generation_id": "<generationId of the previous slide>", "index": 0 }
       ]
     },
     { "name": "aspect_ratio", "value": "4:5" },
@@ -42,22 +42,22 @@ La clave nunca forma parte de los schemas o respuestas MCP. El proceso arranca s
 }
 ```
 
-La variante inline anterior sigue siendo compatible: `{ "base64": "...", "mime_type": "image/png" }`. Un mismo array puede mezclar referencias por ID e inline. Se admiten PNG, JPEG y WebP, hasta 20 MiB por referencia inline y 25 MiB agregados por request. Los límites de cantidad son 3 referencias para Gemini 2.5 Flash Image y 14 para los modelos Gemini 3 expuestos. Las referencias nunca se escriben en logs.
+The inline variant remains supported: `{ "base64": "...", "mime_type": "image/png" }`. A single array can mix ID-based and inline references. PNG, JPEG and WebP are accepted, up to 20 MiB per inline reference and 25 MiB aggregate per request. Count limits are 3 references for Gemini 2.5 Flash Image and 14 for the exposed Gemini 3 models. References are never written to logs.
 
-Las referencias por ID producen códigos claros: `REFERENCE_GENERATION_NOT_FOUND`, `REFERENCE_GENERATION_NOT_COMPLETED`, `REFERENCE_INDEX_OUT_OF_RANGE`, `REFERENCE_GENERATION_EXPIRED` y `REFERENCE_IS_VIDEO`.
+ID-based references produce clear error codes: `REFERENCE_GENERATION_NOT_FOUND`, `REFERENCE_GENERATION_NOT_COMPLETED`, `REFERENCE_INDEX_OUT_OF_RANGE`, `REFERENCE_GENERATION_EXPIRED` and `REFERENCE_IS_VIDEO`.
 
-## Componer tarjetas sobre un vídeo
+## Composing cards over a video
 
-`compose_video_overlay` recibe el `generationId` de un vídeo vertical 9:16 ya `COMPLETED` y entre 1 y 10 tarjetas temporizadas. Devuelve inmediatamente un `generationId` nuevo; el trabajo se realiza localmente con Pillow, Poppins Bold y ffmpeg, conserva el audio original y se consulta con el mismo `query_tasks`:
+`compose_video_overlay` takes the `generationId` of a vertical 9:16 video that is already `COMPLETED`, plus 1 to 10 timed cards. It immediately returns a new `generationId`; the work is done locally with Pillow, Poppins Bold and ffmpeg, keeps the original audio, and is queried with the same `query_tasks`:
 
 ```json
 {
-  "base_generation_id": "<generationId del video Veo>",
+  "base_generation_id": "<generationId of the Veo video>",
   "overlays": [
-    { "kicker": "GANCHO", "text": "Tu equipo no necesita más herramientas", "style": "normal", "start_time": 0.6, "duration": 2.5 },
-    { "kicker": "SIGUIENTE PASO", "text": "Automatiza lo repetitivo", "style": "cta", "start_time": 4.8, "duration": 2.5 }
+    { "kicker": "HOOK", "text": "Your team does not need more tools", "style": "normal", "start_time": 0.6, "duration": 2.5 },
+    { "kicker": "NEXT STEP", "text": "Automate the repetitive work", "style": "cta", "start_time": 4.8, "duration": 2.5 }
   ]
 }
 ```
 
-El vídeo base no se descarga ni regenera: sus bytes pasan del almacén retenido al proceso ffmpeg. El resultado se persiste como otra generación `video/mp4`, con tamaño y SHA-256 reales, retención normal y las mismas `downloadUrl`/`publicUrl`. Los timings deben quedar dentro de la duración real del vídeo; los errores usan códigos `COMPOSE_*` explícitos. Los textos de las tarjetas no se registran en logs.
+The base video is neither downloaded nor regenerated: its bytes go from the retained store to the ffmpeg process. The result is persisted as another `video/mp4` generation with real size and SHA-256, normal retention and the same `downloadUrl`/`publicUrl`. Timings must fall within the real video duration; errors use explicit `COMPOSE_*` codes. Card texts are not logged.

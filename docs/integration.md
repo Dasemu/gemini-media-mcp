@@ -1,8 +1,8 @@
 # Claude.ai / Cowork
 
-1. En Claude.ai, abre **Settings → Connectors → Add custom connector**.
-2. Usa la URL HTTPS proporcionada al finalizar el despliegue, que ya incorpora el usuario y contraseña HTTP Basic.
-3. Activa las tools del conector en Cowork.
-4. Llama primero a `who_am_i`; después envía con `generate_*` y consulta el UUID con `query_tasks` hasta estado terminal.
+1. In Claude.ai, open **Settings -> Connectors -> Add custom connector**.
+2. Use the HTTPS URL provided at the end of the deployment, which already embeds the HTTP Basic username and password.
+3. Enable the connector tools in Cowork.
+4. Call `who_am_i` first; then submit with `generate_*` and poll the UUID with `query_tasks` until a terminal state.
 
-Para vídeo, espera entre 11 segundos y 6 minutos según la documentación oficial. Evita polling agresivo; 10–15 segundos es razonable.
+For video, expect between 11 seconds and 6 minutes according to the official documentation. Avoid aggressive polling; 10-15 seconds is reasonable.
