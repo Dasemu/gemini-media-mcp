@@ -25,7 +25,7 @@ MCP tool handlers in `src/tools.ts` dispatch to `src/provider.ts` (Gemini/Veo AP
 - No `development` branch exists yet; branch from `main` until one is created.
 
 ## Deployment
-Deployed to an Alpine LXC container (OpenRC service `gemini-veo-mcp`, bound to `127.0.0.1:8087`, nginx reverse-proxying `/zenvairogoogle/`). See `README.md` for the update/restart commands and `docs/deployment.md` for full details.
+Deployed to an Alpine LXC container (OpenRC service `gemini-veo-mcp`, bound to `127.0.0.1:8087`, nginx reverse-proxying `/media-mcp/`). See `README.md` for the update/restart commands and `docs/deployment.md` for full details.
 
 ## Gotchas
 - Veo 3.1 always generates audio; `with_audio=false` is rejected explicitly.

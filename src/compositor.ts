@@ -19,7 +19,7 @@ export async function composeVideoOverlay(
   baseOutput: StoredOutput,
   overlays: VideoOverlay[],
 ): Promise<StoredOutput[]> {
-  const workDir = await mkdtemp(path.join(os.tmpdir(), "zenvairo-compose-"));
+  const workDir = await mkdtemp(path.join(os.tmpdir(), "media-compose-"));
   const temporaryOutput = path.join(mediaDir, `${generationId}-0.download`);
   try {
     const metadata = await probeVideo(baseOutput.path);

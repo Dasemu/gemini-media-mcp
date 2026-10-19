@@ -37,7 +37,7 @@ test("real Veo generation -> local overlay composition -> signed public URL", { 
       base_generation_id: submitted.generationId,
       taskTraceId,
       overlays: [
-        { kicker: "ZENVAIRO", text: "La automatización no debería sentirse genérica", style: "normal", start_time: 0.6, duration: 2.5 },
+        { kicker: "DEMO", text: "La automatización no debería sentirse genérica", style: "normal", start_time: 0.6, duration: 2.5 },
         { kicker: "ACTÚA AHORA", text: "Convierte procesos en ventaja", style: "cta", start_time: 4.8, duration: 2.5 },
       ],
     } }));
@@ -46,7 +46,7 @@ test("real Veo generation -> local overlay composition -> signed public URL", { 
     assert.equal(composed.model, "ffmpeg-overlay");
     assert.equal(composed.outputs[0].mimeType, "video/mp4");
     assert.equal(composed.outputs[0].base64, undefined);
-    assert.match(composed.outputs[0].publicUrl, /^https:\/\/mcp\.zenvairo\.es\/zenvairogoogle\/public-media\//);
+    assert.match(composed.outputs[0].publicUrl, /^http:\/\/127\.0\.0\.1:8087\/public-media\//);
 
     const publicResponse = await fetch(composed.outputs[0].publicUrl);
     assert.equal(publicResponse.status, 200);

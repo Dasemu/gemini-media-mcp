@@ -2,7 +2,7 @@ import sys, json
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
 W, H = 720, 1280
-POPPINS_BOLD = "/usr/share/fonts/zenvairo/Poppins-Bold.ttf"
+POPPINS_BOLD = "/usr/share/fonts/truetype/poppins/Poppins-Bold.ttf"
 NAVY = (10, 22, 48)
 CYAN = (45, 224, 234)
 WHITE = (255, 255, 255)

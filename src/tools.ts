@@ -33,7 +33,7 @@ export function registerTools(server: McpServer, jobs: JobManager): void {
   server.tool("who_am_i", "List available Google image/video models, accepted arguments and current cost estimates.", {
     taskTraceId: taskTraceIdSchema,
   }, async ({ taskTraceId }) => jsonResult({
-    service: "Zenvairo Google Media MCP",
+    service: "Gemini Veo Media MCP",
     taskTraceId,
     backend: "Gemini Developer API",
     authentication: { googleCredentialsConfigured: Boolean(process.env.GEMINI_API_KEY), credentialsExposed: false },
@@ -133,7 +133,7 @@ export function registerTools(server: McpServer, jobs: JobManager): void {
     if (job.status === "COMPLETED" && job.outputs) {
       const allPresent = (await Promise.all(job.outputs.map(outputExists))).every(Boolean);
       if (!allPresent) return jsonResult({ ...payload, status: "FAILED", error: { code: "MEDIA_EXPIRED", message: "Generated media is no longer available", retryable: false } }, true);
-      payload.outputs = await outputPayload(job.outputs, process.env.PUBLIC_BASE_URL || "https://mcp.zenvairo.es/zenvairogoogle", include_base64);
+      payload.outputs = await outputPayload(job.outputs, process.env.PUBLIC_BASE_URL || "http://127.0.0.1:8087", include_base64);
     }
     return jsonResult(payload, job.status === "FAILED");
   });

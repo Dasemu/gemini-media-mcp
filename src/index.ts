@@ -25,7 +25,7 @@ const orphanCleanupInterval = setInterval(() => void orphanCleanup().catch((erro
 orphanCleanupInterval.unref();
 
 function buildServer(): McpServer {
-  const server = new McpServer({ name: "zenvairo-google-media", version: "1.0.0" });
+  const server = new McpServer({ name: "gemini-veo-media", version: "1.0.0" });
   registerTools(server, jobs);
   return server;
 }
@@ -61,7 +61,7 @@ app.get("/public-media/:filename", async (req, res) => {
 
 app.use(authenticate);
 
-app.get("/health", (_req, res) => res.json({ ok: true, service: "zenvairo-google-media", googleCredentialsConfigured: Boolean(process.env.GEMINI_API_KEY), publicMediaSigningConfigured: publicMediaSigningConfigured() }));
+app.get("/health", (_req, res) => res.json({ ok: true, service: "gemini-veo-media", googleCredentialsConfigured: Boolean(process.env.GEMINI_API_KEY), publicMediaSigningConfigured: publicMediaSigningConfigured() }));
 app.get("/media/:filename", (req, res) => {
   if (!/^[0-9a-f-]{36}-\d+\.(png|jpg|mp4)$/.test(req.params.filename)) return res.status(404).json({ error: "not_found" });
   return res.sendFile(req.params.filename, { root: mediaDir, dotfiles: "deny", maxAge: 0 }, (error) => {

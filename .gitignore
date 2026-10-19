@@ -4,8 +4,8 @@ dist/
 deploy/.basic-password
 deploy/.server-token
 deploy/gemini-veo-mcp.env
-deploy/zenvairogoogle.conf
-deploy/zenvairogoogle.htpasswd
+deploy/media-mcp.conf
+deploy/media-mcp.htpasswd
 media/*
 !media/.gitkeep
 gemini-veo-mcp.env

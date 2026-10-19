@@ -1,4 +1,4 @@
-# Zenvairo Media Generator MCP
+# Gemini Veo Media MCP
 
 Remote, stateless (Streamable HTTP) MCP server for image generation with Gemini and video generation with Veo 3.1. It follows the `submit + poll` contract: `generate_image`/`generate_video` return a UUID immediately and `query_tasks` delivers the final result.
 

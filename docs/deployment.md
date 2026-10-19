@@ -1,6 +1,6 @@
 # Deployment on LXC 210 (Alpine/OpenRC)
 
-The operational install lives in `/opt/gemini-veo-mcp`, runs as `mcp:mcp`, binds to `127.0.0.1:8087` and is supervised by OpenRC (`gemini-veo-mcp`). nginx protects `/zenvairogoogle/` with Basic auth and leaves only `/zenvairogoogle/public-media/` public; the application requires a valid, expiring HMAC signature on that route.
+The operational install lives in `/opt/gemini-veo-mcp`, runs as `mcp:mcp`, binds to `127.0.0.1:8087` and is supervised by OpenRC (`gemini-veo-mcp`). nginx protects `/media-mcp/` with Basic auth and leaves only `/media-mcp/public-media/` public; the application requires a valid, expiring HMAC signature on that route.
 
 To add the API key:
 
@@ -22,7 +22,7 @@ Reference for the deployment files in `deploy/`:
 
 - `gemini-veo-mcp.openrc`: OpenRC service.
 - `gemini-veo-mcp.env.template`: environment variable template (no real secrets).
-- `default.conf.lxc210`, `nginx-location.conf`: nginx configuration.
+- `nginx-location.conf`: nginx configuration.
 
 ## Paid integration test
 

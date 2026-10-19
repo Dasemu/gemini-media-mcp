@@ -2,9 +2,9 @@
 
 `query_tasks` uses `include_base64=false` by default so binaries do not accidentally enter the LLM context. Each output returns `index`, `mimeType`, `sizeBytes`, `sha256`, the protected `downloadUrl` and a signed `publicUrl` that Meta can download without credentials. Base64 remains available explicitly with `include_base64=true` when the job's aggregate binary size is at most **25 MiB exactly (26,214,400 bytes)**.
 
-`publicUrl` uses the same domain under `/zenvairogoogle/public-media/...`, carries an HMAC signature bound to the file name and expiry, and lasts 24 hours by default (`PUBLIC_MEDIA_URL_TTL_SECONDS=86400`). The route accepts neither Basic nor Bearer because Meta must read it directly; without a valid signature it responds 403 and an expired signature responds 410. Each later `query_tasks` call issues a fresh URL while the result is still retained.
+`publicUrl` uses the same domain under `/media-mcp/public-media/...`, carries an HMAC signature bound to the file name and expiry, and lasts 24 hours by default (`PUBLIC_MEDIA_URL_TTL_SECONDS=86400`). The route accepts neither Basic nor Bearer because Meta must read it directly; without a valid signature it responds 403 and an expired signature responds 410. Each later `query_tasks` call issues a fresh URL while the result is still retained.
 
-The `downloadUrl` under `/zenvairogoogle/media/...` stays protected by the connector's HTTP Basic credentials. A Google, GCS or third-party CDN URL is never returned. The HMAC key (`PUBLIC_MEDIA_SIGNING_SECRET`, minimum 32 characters) exists only on the server and never appears in schemas, logs or responses.
+The `downloadUrl` under `/media-mcp/media/...` stays protected by the connector's HTTP Basic credentials. A Google, GCS or third-party CDN URL is never returned. The HMAC key (`PUBLIC_MEDIA_SIGNING_SECRET`, minimum 32 characters) exists only on the server and never appears in schemas, logs or responses.
 
 To publish without copying or moving base64, pass `outputs[].publicUrl` directly to SocialMCP's `publish_post` as `imageUrl`, `videoUrl` or `media[].url`. Do not call `upload_media` first.
 
